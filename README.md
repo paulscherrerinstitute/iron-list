@@ -16,6 +16,12 @@ thing! https://github.com/PolymerLabs/tedium/issues
 
 _[Demo and API docs](https://elements.polymer-project.org/elements/iron-list)_
 
+##NOTE:
+This is a copy of the fork at https://github.com/czellweg/iron-list/tree/shift-select
+and implements a shift-select behaviour as discussed in https://github.com/PolymerElements/iron-list/issues/204.
+Once an official release of `iron-list` with a shift-select behaviour is released,
+we use this repository's slightly enhanced codebase as a replacement for
+the official `iron-list` implementation.
 
 ##&lt;iron-list&gt;
 
