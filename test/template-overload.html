@@ -15,59 +15,69 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
   <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-
   <script src="../../web-component-tester/browser.js"></script>
-  <script src="../../test-fixture/test-fixture-mocha.js"></script>
 
   <link rel="import" href="fixtures/helpers.html">
-  <link rel="import" href="fixtures/x-list.html">
+  <link rel="import" href="fixtures/o-list.html">
 
 </head>
 <body>
   <!-- Issue: web-component-tester/issues/505 -->
   <script>void(0)</script>
 
-  <test-fixture id="trivialList">
+  <test-fixture id="defaultTemplateList">
     <template>
-      <x-list style="display: none;"></x-list>
+      <o-list></o-list>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="templateOverloadList">
+    <template>
+      <o-list>
+        <template>
+          <div class="overloaded-template">[[item.index]]</div>
+        </template>
+      </o-list>
     </template>
   </test-fixture>
 
   <script>
 
-    suite('hidden list', function() {
-      var list, container;
+    suite('template overloading', function() {
+      var list;
 
       setup(function() {
-        container = fixture('trivialList');
-        list = container.list;
+        list = fixture('templateOverloadList');
       });
 
-      test('list size', function(done) {
-        list.items = buildDataSet(100);
+      test('check physical item size', function(done) {
+        var setSize = 10;
+        list.items = buildDataSet(setSize);
+
         flush(function() {
-          assert.equal(list.offsetWidth, 0);
-          assert.equal(list.offsetHeight, 0);
+          assert.equal(list.items.length, setSize);
           done();
         });
       });
 
-      test('iron-resize', function(done) {
-        list.items = buildDataSet(100);
-        list.fire('iron-resize');
-        assert.notEqual(getFirstItemFromList(list).textContent, '0');
-        setTimeout(function() {
-          container.style.display = '';
-          assert.notEqual(getFirstItemFromList(list).textContent, '0');
-          list.fire('iron-resize');
-          flush(function() {
-            assert.isTrue(list.isAttached);
-            assert.equal(getFirstItemFromList(list).textContent, '0');
-            done();
-          });
-        }, 100);
+      test('check item template', function(done) {
+        list.items = buildDataSet(1);
+
+        flush(function() {
+          assert.isNotNull(Polymer.dom(list).querySelector('.overloaded-template'));
+          done();
+        });
       });
 
+      test('check count of physical items', function(done) {
+        var setSize = 1;
+        list.items = buildDataSet(setSize);
+
+        flush(function() {
+          assert.equal(Polymer.dom(list).querySelectorAll('*').length - 1, setSize);
+          done();
+        });
+      });
     });
 
   </script>

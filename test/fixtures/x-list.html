@@ -8,26 +8,22 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS
 -->
 
-<link rel="import" href="../../polymer/polymer.html">
-<link rel="import" href="../../iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../iron-scroll-threshold/iron-scroll-threshold.html">
-<link rel="import" href="../iron-list.html">
+<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../../../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../iron-list.html">
 
 <dom-module id="x-list">
   <template>
     <style>
       :host {
-        @apply(--layout-fit);
-        @apply(--layout-vertical);
-
         display: block;
       }
 
       .item {
         color: white;
-        height: 30px;
+        overflow: hidden;
       }
-      
+
       .item:nth-child(odd) {
         background-color: green;
       }
@@ -36,26 +32,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         background-color: red;
       }
 
-      .item.selected {
-        background-color: blue;
-      }
-
-      /*iron-list {
+      iron-list {
         background-color: black;
-      }*/
-      
+      }
     </style>
 
-    <iron-scroll-threshold id="threshold">
-      <iron-list style$="[[_computedListHeight(listHeight)]]" items="[[data]]" as="item" id="list" scroll-target="threshold" selection-enabled multi-selection>
-        <template>
-          <div class$="[[_computedClass(selected)]]" tabindex$="[[_computedTabIndex(tabIndex, useTabIndex)]]">
-            <div style$="[[_computedItemHeight(item)]]" tabindex="0" hidden$="[[primitive]]">[[item.index]]</div>
-            <div style$="[[_computedItemHeight(item)]]" tabindex="0" hidden$="[[!primitive]]">[[item]]</div>
-          </div>
-        </template>
-      </iron-list>
-    </iron-scroll-threshold>
+    <iron-list items="[[data]]" as="item" id="list">
+      <template>
+        <div class="item" selected$="[[selected]]">
+          <div style$="[[_computedItemHeight(item)]]" tabindex$="[[_computedTabIndex(tabIndex, useTabIndex)]]" hidden$="[[primitive]]">[[item.index]]</div>
+          <div style$="[[_computedItemHeight(item)]]" tabindex$="[[_computedTabIndex(tabIndex, useTabIndex)]]" hidden$="[[!primitive]]">[[item]]</div>
+        </div>
+      </template>
+    </iron-list>
   </template>
 
 </dom-module>
@@ -76,7 +65,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       listHeight: {
         type: Number,
-        value: 300
+        value: 300,
+        observer: '_listHeightChanged'
       },
 
       pre: {
@@ -108,24 +98,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       return css;
     },
 
-    /**
-     * Adds the `selected` class in case the list element has been selected.
-     * @param  {Boolean} isSelected true or false
-     */
-    _computedClass: function(isSelected) {
-      var classes = "item";
-      if (isSelected) {
-        classes += " selected";
-      }
-      return classes;
-    },
-
-    _computedListHeight: function(listHeight) {
-      return 'height: ' + (listHeight) + 'px; overflow: hidden;';
-    },
-
     _computedTabIndex: function(tabIndex, useTabIndex) {
       return useTabIndex ? tabIndex : undefined;
+    },
+
+    _listHeightChanged(height) {
+      this.$.list.style.height = height + 'px';
+      this.style.height = height + 'px';
     }
   });
+
 </script>
